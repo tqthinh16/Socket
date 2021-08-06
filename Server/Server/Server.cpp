@@ -27,7 +27,9 @@ int main() {
 	string username, password;
     char message[10] = "connected";
     bool checkLogin[30];
-	LoginList l = {nullptr, nullptr};
+	ClientList l = {nullptr, nullptr};
+    ProvinceList p = { nullptr, nullptr };
+
 
 	for (int i = 0; i < max_clients; i++) {
 		client_socket[i] = 0;
@@ -35,6 +37,9 @@ int main() {
 	}
 	
     getLoginData(l, "input.txt");
+    getProvinceData(p, "data.txt");
+
+
 	// Initialize WinSock
 	WSAData data;
 	WORD ver = MAKEWORD(2, 2);
@@ -142,12 +147,14 @@ int main() {
             if (FD_ISSET(sd, &readfds))
             {
 
-                
+                BACK:
                 //Check if it was for closing , and also read the 
                 //incoming message 
                 valread = recv(sd, buffer, 1024, 0);
+                
+                string input = buffer;
 
-                if (valread == SOCKET_ERROR || valread == 0)
+                if (valread == SOCKET_ERROR || valread == 0 || input == "0")
                 {
                     //Somebody disconnected , get his details and print 
                     getpeername(sd, (struct sockaddr*)&address, &len);
@@ -157,37 +164,74 @@ int main() {
                     break;
                 }
 
-                if (checkLogin[i] == false) {
-                TRY:
-                    //valread = recv(sd, buffer, 1024, 0);
-                    username = buffer;
-                    valread = recv(sd, buffer, 1024, 0);
-                    password = buffer;
-
-                    if (checkCorrect(l, username, password) == false) {
-                        send(sd, error, sizeof(error), 0);
-                        cout << username << " " << password << endl;
-                        cout << "wrong username or password" << endl;
-                        goto TRY;
-                    }
-                    else
-                    {
-                        cout << username << " " << password << endl;
-                        send(sd, correct, sizeof(correct), 0);
-                        checkLogin[i] = true;
+                if (input == "1") {
+                    if (checkLogin[i] == false) {
+                    TRY1:
                         ZeroMemory(buffer, 1024);
+                        valread = recv(sd, buffer, 1024, 0);
+                        username = buffer;
+                        valread = recv(sd, buffer, 1024, 0);
+                        password = buffer;
+
+                        if (checkCorrect(l, username, password) == false) {
+                            send(sd, error, sizeof(error), 0);
+                            cout << username << " " << password << endl;
+                            cout << "wrong username or password" << endl;
+                            goto TRY1;
+                        }
+                        else
+                        {
+                            cout << username << " " << password << endl;
+                            send(sd, correct, sizeof(correct), 0);
+                            checkLogin[i] = true;
+                            ZeroMemory(buffer, 1024);
+                        }
                     }
                 }
 
+                else if (input == "2") {
+                TRY2:
+                    ZeroMemory(buffer, 1024);
+                    valread = recv(sd, buffer, 1024, 0);
+                    username = buffer;
+                    valread = recv(sd, buffer, 1024, 0);
+                    password = buffer;
+                    
+                    if (checkAvailableUsername(l, username) == false) {
+                        send(sd, error, sizeof(error), 0);
+                        cout << username << " " << password << endl;
+                        cout << "wrong username or password" << endl;
+                        goto TRY2;
+                    }
+                    else {
+                        UserReg(l, username, password);
+                        send(sd, correct, sizeof(correct), 0);
+                        cout << "register successfully" << endl;
+                        goto BACK;
+                    }
 
-                //Echo back the message that came in 
-                //else
-                //{
-                    //set the string terminating NULL byte on the end 
-                    //of the data read 
-                    buffer[valread] = '\0';
-                    send(sd, buffer, strlen(buffer), 0);
-               // }
+                }
+
+                else {
+                    Province* cur = findProvince(p, input);
+                    if (cur) {
+                        string cases = to_string(cur->Cases);
+                        string uTreat = to_string(cur->uTreatment);
+                        string other = to_string(cur->Other);
+                        string recovery = to_string(cur->Recovery);
+                        string death = to_string(cur->Death);
+
+
+                        string info = cur->name + "," + cases + "," + uTreat + "," + other + "," + recovery + "," + death + "\n";
+                        //Echo back the message that came in 
+                        //else
+                        //{
+                            //set the string terminating NULL byte on the end 
+                            //of the data read 
+                            //buffer[valread] = '\0';
+                        send(sd, info.c_str(), info.size() + 1, 0);
+                    }
+                }
             }
         }
     }
