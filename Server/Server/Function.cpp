@@ -4,19 +4,34 @@
 
 using namespace std;
 
-struct Node {
+struct Client {
 	string username;
 	string password;
-	Node* next;
+	Client* next;
 };
 
-struct LoginList {
-	Node* head = nullptr;
-	Node* tail = nullptr;
+struct ClientList {
+	Client* head = nullptr;
+	Client* tail = nullptr;
 };
 
-Node* create1(string str) {
-	Node* p = new Node;
+struct Province {
+	string name;
+	int Cases;
+	int uTreatment;
+	int Recovery;
+	int Death;
+	int Other;
+	Province* next = nullptr;
+};
+
+struct ProvinceList {
+	Province* head = nullptr;
+	Province* tail = nullptr;
+};
+
+Client* create1(string str) {
+	Client* p = new Client;
 	stringstream ss(str);
 	getline(ss, p->username, ',');
 	ss >> p->password;
@@ -25,12 +40,12 @@ Node* create1(string str) {
 }
 
 
-void getLoginData(LoginList& l, string file_name) {
+void getLoginData(ClientList& l, string file_name) {
 	ifstream fin(file_name, ios_base::in);
 	string temp;
 	while (!fin.eof()) {
 		getline(fin, temp);
-		//Node* g = create1(temp);
+		//Client* g = create1(temp);
 		if (l.head == nullptr) {
 			l.head = create1(temp);
 			l.tail = l.head;
@@ -45,8 +60,8 @@ void getLoginData(LoginList& l, string file_name) {
 	fin.close();
 }
 
-bool checkAvailableUsername(LoginList& l, string user) {
-	Node* cur = l.head;
+bool checkAvailableUsername(ClientList& l, string user) {
+	Client* cur = l.head;
 	if (cur == nullptr) return true;
 	while (cur) {
 		if (user == cur->username) {
@@ -58,30 +73,35 @@ bool checkAvailableUsername(LoginList& l, string user) {
 	return true;
 }
 
-Node* create2(string username, string password) {
-	Node* p = new Node;
+Client* create2(string username, string password) {
+	Client* p = new Client;
 	p->username = username;
 	p->password = password;
 	p->next = nullptr;
 	return p;
 }
 
-void UserReg(LoginList& l, string user, string pass) {
+void UserReg(ClientList& l, string user, string pass) {
+	fstream fout("input.txt", ios_base::app);
+	Client* p = create2(user, pass);
 	if (l.head == nullptr) {
-		l.head = create2(user, pass);
+		l.head = p;
 		l.tail = l.head;
 		l.tail->next = nullptr;
 	}
 	else {
-		l.tail->next = create2(user, pass);
+		l.tail->next = p;
 		l.tail = l.tail->next;
 		l.tail->next = nullptr;
 	}
+	fout << "\n" << p->username << "," << p->password;
+
+	fout.close();
 }
 
-bool checkCorrect(LoginList& l, string user, string pass)
+bool checkCorrect(ClientList& l, string user, string pass)
 {
-	Node* cur = l.head;
+	Client* cur = l.head;
 	if (cur == nullptr) return false;
 	while (cur) {
 		if (user == cur->username && pass == cur->password) {
@@ -91,4 +111,69 @@ bool checkCorrect(LoginList& l, string user, string pass)
 		cur = cur->next;
 	}
 	return false;
+}
+
+Province* create3(string str) {
+	Province* p = new Province;
+	stringstream ss(str);
+	string temp;
+
+	getline(ss, p->name, ',');
+
+	getline(ss, temp, ',');
+	p->Cases = stoi(temp);
+
+	getline(ss, temp, ',');
+	p->uTreatment = stoi(temp);
+
+	getline(ss, temp, ',');
+	p->Other = stoi(temp);
+
+	getline(ss, temp, ',');
+	p->Recovery = stoi(temp);
+
+	getline(ss, temp);
+	p->Death = stoi(temp);
+
+	p->next = nullptr;
+	return p;
+}
+
+void getProvinceData(ProvinceList& l, string file_name) {
+	ifstream fin(file_name, ios_base::in);
+	string temp;
+	while (!fin.eof()) {
+		getline(fin, temp);
+		//Client* g = create1(temp);
+		if (l.head == nullptr) {
+			l.head = create3(temp);
+			l.tail = l.head;
+			l.tail->next = nullptr;
+		}
+		else {
+			l.tail->next = create3(temp);
+			l.tail = l.tail->next;
+			l.tail->next = nullptr;
+		}
+	}
+	fin.close();
+}
+
+Province* findProvince(ProvinceList& l, string name) {
+	if (l.head == nullptr) {
+		cout << "not found" << endl;
+		return nullptr;
+	}
+
+	Province* pcur = l.head;
+	while (pcur) {
+		if (pcur->name == name) {
+			//cout << pcur->name << " " << pcur->Cases << " " << pcur->uTreatment << " " << pcur->Other << " " << pcur->Recovery << " " << pcur->Death << endl;
+			return pcur;
+			break;
+		}
+		pcur = pcur->next;
+	}
+
+	//if (pcur == nullptr) return nullptr;
 }
