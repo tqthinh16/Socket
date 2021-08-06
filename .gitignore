@@ -1,0 +1,16 @@
+
+Client/.vs/Client/v16/.suo
+*.db
+*.ipch
+*.log
+*.db-shm
+*.db-wal
+*.pdb
+*.tlog
+*.obj
+*.idb
+*.ilk
+*.recipe
+*.opendb
+Server/.vs/Server/v16/.suo
+*.exe
