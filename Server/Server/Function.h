@@ -20,19 +20,22 @@ struct ClientList {
 	Client* tail = nullptr;
 };
 
-struct Province {
+struct Country {
 	string name;
 	int Cases;
+	int today_Cases;
 	int uTreatment;
 	int Recovery;
 	int Death;
+	int Today_Deaths;
 	int Other;
-	Province* next = nullptr;
+
+	Country* next = nullptr;
 };
 
-struct ProvinceList {
-	Province* head = nullptr;
-	Province* tail = nullptr;
+struct CountryList {
+	Country* head = nullptr;
+	Country* tail = nullptr;
 };
 
 
@@ -42,7 +45,7 @@ bool checkAvailableUsername(ClientList& l, string user);
 Client* create2(string username, string password);
 void UserReg(ClientList& l, string user, string pass);
 bool checkCorrect(ClientList& l, string user, string pass);
-Province* create3(string str);
-void getProvinceData(ProvinceList& l, string file_name);
-Province* findProvince(ProvinceList& l, string name);
+Country* create3(string str);
+void getCountryData(CountryList& l, string file_name);
+Country* findCountry(CountryList& l, string name);
 
