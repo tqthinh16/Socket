@@ -1,34 +1,9 @@
 #include <iostream>
 #include<fstream>
 #include <sstream>
+#include"Function.h"
 
 using namespace std;
-
-struct Client {
-	string username;
-	string password;
-	Client* next;
-};
-
-struct ClientList {
-	Client* head = nullptr;
-	Client* tail = nullptr;
-};
-
-struct Province {
-	string name;
-	int Cases;
-	int uTreatment;
-	int Recovery;
-	int Death;
-	int Other;
-	Province* next = nullptr;
-};
-
-struct ProvinceList {
-	Province* head = nullptr;
-	Province* tail = nullptr;
-};
 
 Client* create1(string str) {
 	Client* p = new Client;
@@ -113,8 +88,8 @@ bool checkCorrect(ClientList& l, string user, string pass)
 	return false;
 }
 
-Province* create3(string str) {
-	Province* p = new Province;
+Country* create3(string str) {
+	Country* p = new Country;
 	stringstream ss(str);
 	string temp;
 
@@ -139,7 +114,7 @@ Province* create3(string str) {
 	return p;
 }
 
-void getProvinceData(ProvinceList& l, string file_name) {
+void getCountryData(CountryList& l, string file_name) {
 	ifstream fin(file_name, ios_base::in);
 	string temp;
 	while (!fin.eof()) {
@@ -159,13 +134,13 @@ void getProvinceData(ProvinceList& l, string file_name) {
 	fin.close();
 }
 
-Province* findProvince(ProvinceList& l, string name) {
+Country* findCountry(CountryList& l, string name) {
 	if (l.head == nullptr) {
 		cout << "not found" << endl;
 		return nullptr;
 	}
 
-	Province* pcur = l.head;
+	Country* pcur = l.head;
 	while (pcur) {
 		if (pcur->name == name) {
 			//cout << pcur->name << " " << pcur->Cases << " " << pcur->uTreatment << " " << pcur->Other << " " << pcur->Recovery << " " << pcur->Death << endl;
