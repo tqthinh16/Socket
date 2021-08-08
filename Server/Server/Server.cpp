@@ -28,7 +28,7 @@ int main() {
     char message[10] = "connected";
     bool checkLogin[30];
 	ClientList l = {nullptr, nullptr};
-    ProvinceList p = { nullptr, nullptr };
+    CountryList p = { nullptr, nullptr };
 
 
 	for (int i = 0; i < max_clients; i++) {
@@ -37,7 +37,7 @@ int main() {
 	}
 	
     getLoginData(l, "input.txt");
-    getProvinceData(p, "data.txt");
+    getCountryData(p, "data.txt");
 
 
 	// Initialize WinSock
@@ -213,7 +213,7 @@ int main() {
                 }
 
                 else {
-                    Province* cur = findProvince(p, input);
+                    Country* cur = findCountry(p, input);
                     if (cur) {
                         string cases = to_string(cur->Cases);
                         string uTreat = to_string(cur->uTreatment);
