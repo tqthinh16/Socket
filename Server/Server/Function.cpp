@@ -150,5 +150,5 @@ Country* findCountry(CountryList& l, string name) {
 		pcur = pcur->next;
 	}
 
-	//if (pcur == nullptr) return nullptr;
+	if (pcur == nullptr) return nullptr;
 }
