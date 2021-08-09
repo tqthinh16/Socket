@@ -5,6 +5,7 @@
 #include<stdlib.h>
 #include<sys/types.h>
 #include<time.h>
+
 #include"Function.h"
 
 #pragma comment (lib, "ws2_32.lib")
@@ -159,7 +160,7 @@ int main() {
                 {
                     //Somebody disconnected , get his details and print 
                     getpeername(sd, (struct sockaddr*)&address, &len);
-                    cout << "CLient No." << i << " disconnected! " << endl;
+                    cout << endl << "CLient No." << i << " disconnected! " << endl;
                     closesocket(sd);
                     client_socket[i] = 0;
                     break;
@@ -173,6 +174,16 @@ int main() {
                         username = buffer;
                         valread = recv(sd, buffer, 1024, 0);
                         password = buffer;
+
+                        if (valread == SOCKET_ERROR || valread == 0)
+                        {
+                            //Somebody disconnected , get his details and print 
+                            getpeername(sd, (struct sockaddr*)&address, &len);
+                            cout << endl << "CLient No." << i << " disconnected! " << endl;
+                            closesocket(sd);
+                            client_socket[i] = 0;
+                            break;
+                        }
 
                         if (checkCorrect(l, username, password) == false) {
                             send(sd, error, sizeof(error), 0);
@@ -188,6 +199,7 @@ int main() {
                         }
                     }
                 }
+
                 else if (input == "2") {
                 TRY2:
                     ZeroMemory(buffer, 1024);
@@ -197,6 +209,16 @@ int main() {
                     password = buffer;
                     valread = recv(sd, buffer, 1024, 0);
                     password1 = buffer;
+
+                    if (valread == SOCKET_ERROR || valread == 0)
+                    {
+                        //Somebody disconnected , get his details and print 
+                        getpeername(sd, (struct sockaddr*)&address, &len);
+                        cout << "CLient No." << i << " disconnected! " << endl;
+                        closesocket(sd);
+                        client_socket[i] = 0;
+                        break;
+                    }
 
                     if (password != password1)
                     {
@@ -209,7 +231,6 @@ int main() {
                     
                     else if (checkAvailableUsername(l, username) == false) {
                         send(sd, error, sizeof(error), 0);
-                        cout << "wrong username or password" << endl;
                         goto TRY2;
                     }
 
@@ -235,11 +256,10 @@ int main() {
 
                         string info = cur->name + "," + cases + "," + uTreat + "," + other + "," + recovery + "," + death + "\n";
                         //Echo back the message that came in 
-                        //else
-                        //{
-                            //set the string terminating NULL byte on the end 
-                            //of the data read 
-                            //buffer[valread] = '\0';
+
+                        //set the string terminating NULL byte on the end 
+                        //of the data read 
+                        //buffer[valread] = '\0';
                         send(sd, info.c_str(), info.size() + 1, 0);
                     }
 
