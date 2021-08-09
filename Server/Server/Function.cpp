@@ -1,7 +1,18 @@
-#include <iostream>
+#include<iostream>
+#include<string.h>
+#include<WinSock2.h>
+#include<winsock.h>
+#include<stdlib.h>
+#include<sys/types.h>
+#include<time.h>
 #include<fstream>
-#include <sstream>
+#include<sstream>
+
 #include"Function.h"
+
+#pragma comment (lib, "ws2_32.lib")
+#pragma comment (lib, "Mswsock.lib")
+#pragma comment (lib, "AdvApi32.lib")
 
 using namespace std;
 
@@ -152,3 +163,5 @@ Country* findCountry(CountryList& l, string name) {
 
 	if (pcur == nullptr) return nullptr;
 }
+
+
