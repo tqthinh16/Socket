@@ -22,9 +22,10 @@ int main() {
 	char buffer[1024] = { 0 };
 	char error[7] = "failed";
     char correct[8] = "correct";
+    char confirm[8] = "confirm";
 	fd_set readfds;
 	int max_sd;
-	string username, password;
+    string username, password, password1;
     char message[10] = "connected";
     bool checkLogin[30];
 	ClientList l = {nullptr, nullptr};
@@ -52,7 +53,7 @@ int main() {
 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd == INVALID_SOCKET) {
-		cout << "fail socket" << endl;
+		cout << "Sokcet Failed" << endl;
 		exit(1);
 	}
 	cout << "Socket created" << endl;
@@ -64,13 +65,13 @@ int main() {
 	int len = sizeof(address);
 
 	if (bind(sockfd, (struct sockaddr*)&address, len) < 0) {
-		cout << "failed bind" << endl;
+		cout << endl << "Bind Failed" << endl;
 		return -1;
 	}
-	cout << "Binded" << endl;
+	cout << endl << "Binded" << endl;
 
 	listen(sockfd, SOMAXCONN);
-	cout << "Waiting for connection....." << endl;
+	cout << endl << "Waiting for connection....." << endl;
 
     while (TRUE)
     {
@@ -133,7 +134,7 @@ int main() {
                 if (client_socket[i] == 0)
                 {
                     client_socket[i] = new_sock;
-                    cout << "Adding to list of sockets as client no." << i << endl;
+                    cout << endl << "Adding to list of sockets as client no." << i << endl;
                     break;
                 }
             }
@@ -175,20 +176,18 @@ int main() {
 
                         if (checkCorrect(l, username, password) == false) {
                             send(sd, error, sizeof(error), 0);
-                            cout << username << " " << password << endl;
-                            cout << "wrong username or password" << endl;
+                            cout << endl << "CLient No." << i << " login unsuccessfully! " << endl;
                             goto TRY1;
                         }
                         else
                         {
-                            cout << username << " " << password << endl;
+                            cout << endl << "CLient No." << i << " login successfully! " << endl;
                             send(sd, correct, sizeof(correct), 0);
                             checkLogin[i] = true;
                             ZeroMemory(buffer, 1024);
                         }
                     }
                 }
-
                 else if (input == "2") {
                 TRY2:
                     ZeroMemory(buffer, 1024);
@@ -196,24 +195,36 @@ int main() {
                     username = buffer;
                     valread = recv(sd, buffer, 1024, 0);
                     password = buffer;
+                    valread = recv(sd, buffer, 1024, 0);
+                    password1 = buffer;
+
+                    if (password != password1)
+                    {
+                        send(sd, confirm, sizeof(confirm), 0);
+                        cout << endl << "CLient No." << i << " login successfully! " << endl;
+                        cout << "Wrong confirm password" << endl;
+                        goto TRY2;
+
+                    }
                     
-                    if (checkAvailableUsername(l, username) == false) {
+                    else if (checkAvailableUsername(l, username) == false) {
                         send(sd, error, sizeof(error), 0);
-                        cout << username << " " << password << endl;
                         cout << "wrong username or password" << endl;
                         goto TRY2;
                     }
+
                     else {
                         UserReg(l, username, password);
                         send(sd, correct, sizeof(correct), 0);
-                        cout << "register successfully" << endl;
+                        cout << endl << "CLient No." << i << " register successfully! " << endl;
                         goto BACK;
                     }
-
                 }
 
                 else {
+                    cout << endl << "CLient No." << i << " search for " << input << endl;
                     Country* cur = findCountry(p, input);
+
                     if (cur) {
                         string cases = to_string(cur->Cases);
                         string uTreat = to_string(cur->uTreatment);
@@ -231,10 +242,16 @@ int main() {
                             //buffer[valread] = '\0';
                         send(sd, info.c_str(), info.size() + 1, 0);
                     }
+
+                    else {
+                        string info = "Invalid input or Country not found";
+                        send(sd, info.c_str(), info.size() + 1, 0);
+                    }
                 }
             }
         }
     }
+
 	WSACleanup();
 	return 0;
 }
