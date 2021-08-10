@@ -1,3 +1,4 @@
+#pragma warning( disable : 4996)
 #include<iostream>
 #include<string.h>
 #include<WinSock2.h>
@@ -12,6 +13,7 @@
 #pragma comment (lib, "ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
+
 
 using namespace std;
 
@@ -90,7 +92,7 @@ int main() {
         //add master socket to set 
         FD_SET(sockfd, &readfds);
         max_sd = sockfd;
-   // BACK2:
+
         //add child sockets to set 
         for (int i = 0; i < max_clients; i++)
         {
@@ -106,7 +108,7 @@ int main() {
                 max_sd = sd;
         }
 
-        //wait for an activity on one of the sockets , timeout is NULL , 
+        //wait for an activity on one of the sockets, timeout is NULL, 
         //so wait indefinitely 
         activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
 
@@ -116,7 +118,7 @@ int main() {
         }
 
     BACK2:
-        //If something happened on the master socket , 
+        //If something happened on the master socket, 
         //then its an incoming connection 
         if (FD_ISSET(sockfd, &readfds))
         {
@@ -125,18 +127,9 @@ int main() {
                 perror("accept");
                 exit(EXIT_FAILURE);
             }
+ 
+            cout << "New connection from "  << inet_ntoa(address.sin_addr) << ": ";
 
-            //inform user of socket number - used in send and receive commands 
-            //printf("New connection , socket fd is %d , ip is : %s , port : %d n" , new_sock , inet_ntoa(address.sin_addr) , ntohs_ address.sin_port));
-
-            //send new connection greeting message 
-            /*if (send(new_sock, message, strlen(message), 0) != strlen(message))
-            {
-                perror("send");
-            }
-
-            puts("Welcome message sent successfully");
-            */
             //add new socket to array of sockets 
             for (int i = 0; i < max_clients; i++)
             {
@@ -159,8 +152,7 @@ int main() {
             {
 
                 BACK:
-                //Check if it was for closing , and also read the 
-                //incoming message 
+                //Check if it was for closing , and also read the incoming message 
                 valread = recv(sd, buffer, 1024, 0);
                 
                 string input = buffer;
@@ -175,6 +167,7 @@ int main() {
                     break;
                 }
 
+                // login process
                 if (input == "1") {
                     if (checkLogin[i] == false) {
                     TRY1:
@@ -209,6 +202,7 @@ int main() {
                     }
                 }
 
+                // if user want to register
                 else if (input == "2") {
                 TRY2:
                     ZeroMemory(buffer, 1024);
@@ -251,6 +245,7 @@ int main() {
                     }
                 }
 
+                // Secret command to disconnect all client connection
                 else if (input == "-closeAll") {
                     string confirm;
                     int sdk;
@@ -287,13 +282,14 @@ int main() {
                         string recovery = to_string(cur->Recovery);
                         string death = to_string(cur->Death);
 
-
+                       
                         string info = cur->name + "," + cases + "," + uTreat + "," + other + "," + recovery + "," + death + "\n";
-                        //Echo back the message that came in 
+                        
+                        //Respones the message that came in 
 
                         //set the string terminating NULL byte on the end 
                         //of the data read 
-                        //buffer[valread] = '\0';
+                        buffer[valread] = '\0';
                         send(sd, info.c_str(), info.size() + 1, 0);
                     }
 
