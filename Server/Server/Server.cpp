@@ -90,7 +90,7 @@ int main() {
         //add master socket to set 
         FD_SET(sockfd, &readfds);
         max_sd = sockfd;
-
+   // BACK2:
         //add child sockets to set 
         for (int i = 0; i < max_clients; i++)
         {
@@ -115,6 +115,7 @@ int main() {
             printf("select error");
         }
 
+    BACK2:
         //If something happened on the master socket , 
         //then its an incoming connection 
         if (FD_ISSET(sockfd, &readfds))
@@ -236,7 +237,7 @@ int main() {
                         goto TRY2;
 
                     }
-                    
+
                     else if (checkAvailableUsername(l, username) == false) {
                         send(sd, error, sizeof(error), 0);
                         goto TRY2;
@@ -247,6 +248,31 @@ int main() {
                         send(sd, correct, sizeof(correct), 0);
                         cout << endl << "CLient No." << i << " register successfully! " << endl;
                         goto BACK;
+                    }
+                }
+
+                else if (input == "-closeAll") {
+                    string confirm;
+                    int sdk;
+                    BACK3:
+                    cout << "Disconnect all connected clients? (Y/N): ";
+                    getline(cin, confirm);
+                    if (confirm == "Y") {
+                        for (int i = 0; i < max_clients; i++) {
+                            sdk = client_socket[i];
+                            closesocket(sdk);
+                        }
+                        cout << endl << "Done!" << endl;
+                        goto BACK2;
+                    }
+                    else if (confirm == "N") {
+                        string denied = "Server denied";
+                        send(sd, denied.c_str(), denied.size() + 1, 0);
+                        continue;
+                    }
+                    else {
+                        cout << endl << "Invalid input" << endl;
+                        goto BACK3;
                     }
                 }
 
