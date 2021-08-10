@@ -70,10 +70,14 @@ MENU:
 		send(sock, username.c_str(), username.size() + 1, 0);
 		send(sock, password.c_str(), password.size() + 1, 0);
 
-		recv(sock, buffer, 1024, 0);
+		int re = recv(sock, buffer, 1024, 0);
 		if (strcmp(buffer, "failed") == 0) {
 			cout << "Wrong username or password, pls try again!" << endl;
 			goto TRYAGAIN1;
+		}
+		else if (re == SOCKET_ERROR) {
+			cout << endl << "Server closed! Client Disconnected..." << endl;
+			exit(1);
 		}
 	}
 
@@ -91,7 +95,7 @@ MENU:
 		send(sock, password.c_str(), password.size() + 1, 0);
 		send(sock, password1.c_str(), password.size() + 1, 0);
 
-		recv(sock, buffer, 1024, 0);
+		int re2 = recv(sock, buffer, 1024, 0);
 
 		if (strcmp(buffer, "confirm") == 0) {
 			cout << "Wrong confirm password, pls try again!" << endl;
@@ -101,7 +105,11 @@ MENU:
 		else if (strcmp(buffer, "failed") == 0) {
 			cout << "Username is not available, pls try again!" << endl;
 			goto TRYAGAIN2;
-		}	
+		}
+		else if (re2 == SOCKET_ERROR) {
+			cout << endl << "Server closed! Client Disconnected..." << endl;
+			exit(1);
+		}
 
 		cout << "Register successfully, Back to MENU" << endl;
 		goto MENU;
@@ -146,6 +154,10 @@ MENU:
 					// Echo response to console
 					cout << "" << endl;
 					cout << "SERVER> " << string(buffer, 0, bytesReceived) << endl;
+				}
+				else {
+					cout << endl << "Server closed! Client Disconnected..." << endl;
+					exit(1);
 				}
 			}
 			else {
