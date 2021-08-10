@@ -3,6 +3,7 @@
 #include<WinSock2.h>
 #include<winsock.h>
 #include<stdlib.h>
+#include <WS2tcpip.h>
 #include<sys/types.h>
 #include<time.h>
 
@@ -58,6 +59,13 @@ int main() {
 		exit(1);
 	}
 	cout << "Socket created" << endl;
+
+    // Forcefully attaching socket to the port 8080
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt)))
+    {
+        perror("setsockopt");
+        exit(EXIT_FAILURE);
+    }
 
 	address.sin_family = AF_INET;
 	address.sin_port = htons(port);
