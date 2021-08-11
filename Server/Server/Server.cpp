@@ -283,7 +283,7 @@ int main() {
                         string death = to_string(cur->Death);
 
                        
-                        string info = cur->name + "," + cases + "," + uTreat + "," + other + "," + recovery + "," + death + "\n";
+                        string info = cur->name + "   " + cases + "   " + uTreat + "   " + other + "    " + recovery + "    " + death + "\n";
                         
                         //Respones the message that came in 
 
