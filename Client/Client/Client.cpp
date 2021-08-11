@@ -53,16 +53,19 @@ int main() {
 	cout << "Connected!" << endl;
 
 MENU:
-	cout << endl << "1. Login" << endl << "2. Sign up" << endl << "0. Exit" << endl << "Choose function: ";
+	system("cls");
+	cout << "MENU:" << endl << "1. Login" << endl << "2. Sign up" << endl << "0. Exit" << endl << "Choose function: ";
 	
 	getline(cin, input);
 
-	send(sock, input.c_str(), 2, 0);
+	send(sock, input.c_str(), input.size() + 1, 0);
 
 	if (input == "1") {
 
 	TRYAGAIN1:
-		cout << endl <<  "LOGIN" << endl;
+		system("cls");
+
+		cout << "LOGIN" << endl;
 		cout << "Username: ";
 		getline(cin, username);
 		cout << "password: ";
@@ -71,8 +74,10 @@ MENU:
 		send(sock, password.c_str(), password.size() + 1, 0);
 
 		int re = recv(sock, buffer, 1024, 0);
+
 		if (strcmp(buffer, "failed") == 0) {
-			cout << "Wrong username or password, pls try again!" << endl;
+			cout << endl << "Wrong username or password, pls try again!" << endl;
+			system("pause");
 			goto TRYAGAIN1;
 		}
 		else if (re == SOCKET_ERROR) {
@@ -83,7 +88,9 @@ MENU:
 
 	else if (input == "2") {
 	TRYAGAIN2:
-		cout << endl << "REGISTER" << endl;
+		system("cls");
+
+		cout << "REGISTER" << endl;
 		cout << "Username: ";
 		getline(cin, username);
 		cout << "Password: ";
@@ -98,25 +105,29 @@ MENU:
 		int re2 = recv(sock, buffer, 1024, 0);
 
 		if (strcmp(buffer, "confirm") == 0) {
-			cout << "Wrong confirm password, pls try again!" << endl;
+			cout << endl << "Wrong confirm password, pls try again!" << endl;
+			system("pause");
 			goto TRYAGAIN2;
 		}
 
 		else if (strcmp(buffer, "failed") == 0) {
-			cout << "Username is not available, pls try again!" << endl;
+			cout << endl << "Username is not available, pls try again!" << endl;
+			system("pause");
 			goto TRYAGAIN2;
 		}
 		else if (re2 == SOCKET_ERROR) {
 			cout << endl << "Server closed! Client Disconnected..." << endl;
+			system("pause");
 			exit(1);
 		}
 
 		cout << "Register successfully, Back to MENU" << endl;
+		system("pause");
 		goto MENU;
 
 	}
 	else if (input == "0") {
-		cout << "close connection" << endl;
+		cout << endl << "Close connection" << endl;
 		exit(1);
 	}
 
@@ -130,14 +141,10 @@ MENU:
 	/// <summary>
 	do
 	{
+		system("cls");
 		// Prompt the user for some text
-		cout << "Enter province's name for look up (0. Exit): ";
+		cout << "Enter province's name for look up: ";
 		getline(cin, clientInput);
-
-		if (clientInput == "0") {
-			cout << "Exit" << endl;
-			exit(1);
-		}
 
 		if (clientInput.size() > 0)		// Make sure the user has typed in something
 		{
@@ -152,8 +159,24 @@ MENU:
 				if (bytesReceived > 0)
 				{
 					// Echo response to console
-					cout << "" << endl;
-					cout << "SERVER> " << string(buffer, 0, bytesReceived) << endl;
+					
+					cout << endl << "SERVER>  " << string(buffer, 0, bytesReceived) << endl;
+					cout << "1. Continue Look up" << endl << "0. Exit" << endl << "Choose: ";
+					string i;
+
+					LABEL1:
+					getline(cin, i);
+
+					if (i == "1")
+						continue;
+					else if (i == "0") {
+						cout << "Exit" << endl;
+						exit(1);
+					}
+					else {
+						cout << "Invalid input, pls choose again: ";
+						goto LABEL1;
+					}				
 				}
 				else {
 					cout << endl << "Server closed! Client Disconnected..." << endl;
