@@ -282,10 +282,11 @@ void getCountryData(CountryList& root,string date ) {
     ifstream f;
     Json::Value C;
     string info;
-    f.open(date + ".json");
+    f.open(date + ".json", ifstream::binary);
+    if (f.fail()) return;
     f >> C;
 
-    for (Json::Value::ArrayIndex i = 0; i != C.size(); i++) {
+    for (int i = 0; i != C.size(); i++) {
         if (C[i].size() != 12) continue;
         info = "";
 
