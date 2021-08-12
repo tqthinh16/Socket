@@ -255,7 +255,7 @@ void WebToFile() {
         }
     }
     closesocket(Socket);
-    WSACleanup();
+    //WSACleanup();
 
     string temp;
     Json::Value res = ConvertToJson(website_HTML, temp);
