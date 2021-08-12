@@ -1,3 +1,6 @@
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+
 #ifndef Function_h_
 #define Function_h
 #endif // !Function_h_
@@ -12,6 +15,15 @@
 #include<fstream>
 #include<sstream>
 
+//
+#include <winsock2.h>
+#include <windows.h>
+#include <vector>
+#include <locale>
+#include <ctime>
+#include <ctype.h>
+#include "json/json.h"
+//
 #pragma comment (lib, "ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
@@ -37,7 +49,6 @@ struct Country {
 	int Recovery;
 	int Death;
 	int Today_Deaths;
-	int Other;
 
 	Country* next = nullptr;
 };
@@ -47,14 +58,35 @@ struct CountryList {
 	Country* tail = nullptr;
 };
 
+struct time_mark {
+	int hour;
+	int date;
+	int month;
+	int year;
+};
 
-Client* create1(string str);
-void getLoginData(ClientList& l, string file_name);
-bool checkAvailableUsername(ClientList& l, string user);
-Client* create2(string username, string password);
-void UserReg(ClientList& l, string user, string pass);
-bool checkCorrect(ClientList& l, string user, string pass);
-Country* create3(string str);
-void getCountryData(CountryList& l, string file_name);
-Country* findCountry(CountryList& l, string name);
+
+Client* create1(string);
+void getLoginData(ClientList&, string);
+bool checkAvailableUsername(ClientList&, string);
+Client* create2(string, string);
+void UserReg(ClientList&, string, string);
+bool checkCorrect(ClientList&, string, string);
+Country* create3(string);
+void getCountryData(CountryList&, string);
+Country* findCountry(CountryList&, string);
+
+string DateTodayString();
+Json::Value decode(string);
+Json::Value ConvertToJson(string, string&);
+void WebToFile();
+
+time_mark getTime_mark();
+bool greaterTime(time_mark, time_mark);
+
+void deleteList(CountryList&);
+
+
+
+
 

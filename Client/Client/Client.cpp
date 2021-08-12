@@ -6,6 +6,8 @@
 #include<sys/types.h>
 #include <WS2tcpip.h>
 #include<sstream>
+#include<ctime>
+#include <locale>
 
 #pragma comment (lib, "ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
@@ -14,6 +16,26 @@
 #define _WIN32_WINNT 0x0A00
 
 using namespace std;
+
+
+string DateTodayString() {
+	time_t t = time(0);   // get time now
+	struct tm* now = localtime(&t);
+	string res;
+	if (now->tm_mday < 10) res += "0";
+	res += to_string(now->tm_mday);
+	res += "-";
+
+	if (now->tm_mon < 9) res += "0";
+	res += to_string(now->tm_mon + 1);
+
+	res += "-";
+
+	res += to_string(now->tm_year + 1900);
+	return res;
+}
+
+
 
 int main() {
 	int sock, valread;
@@ -25,7 +47,7 @@ int main() {
 	getline(cin, IP);
 	string username, password, password1;
 	string input;
-
+	string date = DateTodayString();
 	// Initialize WinSock
 	WSAData data;
 	WORD ver = MAKEWORD(2, 2);
@@ -57,6 +79,8 @@ MENU:
 	cout << "MENU:" << endl << "1. Login" << endl << "2. Sign up" << endl << "0. Exit" << endl << "Choose function: ";
 	
 	getline(cin, input);
+	input = date + ":" + input;
+
 
 	send(sock, input.c_str(), input.size() + 1, 0);
 
@@ -143,12 +167,21 @@ MENU:
 	{
 		system("cls");
 		// Prompt the user for some text
-		cout << "Enter province's name for look up: ";
+		cout << "Date: " << date << endl;
+		cout << "Enter country to look up (or change date): ";
 		getline(cin, clientInput);
+
+		if (clientInput.size() == 10) {
+			if (clientInput[2] == '-' && clientInput[5] == '-') {
+				date = clientInput;
+				continue;
+			}
+		}
 
 		if (clientInput.size() > 0)		// Make sure the user has typed in something
 		{
 			// Send the text
+			clientInput = date + ":" + clientInput;
 			int sendResult = send(sock, clientInput.c_str(), clientInput.size() + 1, 0);
 			if (sendResult != SOCKET_ERROR)
 			{

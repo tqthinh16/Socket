@@ -44,7 +44,8 @@ int main() {
     getLoginData(l, "input.txt");
     getCountryData(p, "data.txt");
 
-
+    WebToFile();
+    time_mark hold = getTime_mark();
 	// Initialize WinSock
 	WSAData data;
 	WORD ver = MAKEWORD(2, 2);
@@ -127,8 +128,8 @@ int main() {
                 perror("accept");
                 exit(EXIT_FAILURE);
             }
- 
-            cout << "New connection from "  << inet_ntoa(address.sin_addr) << ": ";
+
+            cout << "New connection from " << inet_ntoa(address.sin_addr) << ": ";
 
             //add new socket to array of sockets 
             for (int i = 0; i < max_clients; i++)
@@ -142,20 +143,32 @@ int main() {
                 }
             }
         }
-    
+
         //else its some IO operation on some other socket
         for (int i = 0; i < max_clients; i++)
         {
             sd = client_socket[i];
-            
+
             if (FD_ISSET(sd, &readfds))
             {
 
-                BACK:
+            BACK:
                 //Check if it was for closing , and also read the incoming message 
                 valread = recv(sd, buffer, 1024, 0);
-                
-                string input = buffer;
+
+                string mes = buffer;
+                string input = "";
+                string date_file = "";
+
+                int pos = mes.find(":") + 1;
+                for (int cou = pos; cou < mes.length(); cou++) {
+                    input += mes[cou];
+                }
+
+                for (int cou = 0; cou < pos-1; cou++) {
+                    date_file += mes[cou];
+                }
+
 
                 if (valread == SOCKET_ERROR || valread == 0 || input == "0")
                 {
@@ -249,7 +262,7 @@ int main() {
                 else if (input == "-closeAll") {
                     string confirm;
                     int sdk;
-                    BACK3:
+                BACK3:
                     cout << "Disconnect all connected clients? (Y/N): ";
                     getline(cin, confirm);
                     if (confirm == "Y") {
@@ -270,21 +283,32 @@ int main() {
                         goto BACK3;
                     }
                 }
-
                 else {
+                    if (date_file == DateTodayString()) {
+                        time_mark moment = getTime_mark();
+                        if (greaterTime(moment, hold)) {
+                            WebToFile();
+                        }
+                    }
+
+                    deleteList(p);
+                    getCountryData(p, date_file);
+
                     cout << endl << "CLient No." << i << " search for " << input << endl;
                     Country* cur = findCountry(p, input);
 
                     if (cur) {
+
                         string cases = to_string(cur->Cases);
                         string uTreat = to_string(cur->uTreatment);
-                        string other = to_string(cur->Other);
                         string recovery = to_string(cur->Recovery);
                         string death = to_string(cur->Death);
+                        string todaydeath = to_string(cur->Today_Deaths);
+                        string todaycases = to_string(cur->today_Cases);
 
-                       
-                        string info = cur->name + "   " + cases + "   " + uTreat + "   " + other + "    " + recovery + "    " + death + "\n";
-                        
+
+                        string info = cur->name + "  Cases: " + cases + "  Today_Cases: " + todaycases + "  Deaths: " + death + "  Today_Deaths: " + todaydeath + "  Under_treatment: " + uTreat + "  Recovered: " + recovery + "\n";
+
                         //Respones the message that came in 
 
                         //set the string terminating NULL byte on the end 
