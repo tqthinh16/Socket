@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include<iostream>
 #include<string.h>
 #include<WinSock2.h>
@@ -8,7 +10,7 @@
 #include<sstream>
 #include<ctime>
 #include <locale>
-
+#include <Windows.h>
 #pragma comment (lib, "ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
@@ -84,7 +86,7 @@ MENU:
 
 	send(sock, input.c_str(), input.size() + 1, 0);
 
-	if (input == "1") {
+	if (input[11] == '1') {
 
 	TRYAGAIN1:
 		system("cls");
@@ -110,7 +112,7 @@ MENU:
 		}
 	}
 
-	else if (input == "2") {
+	else if (input[11] == '2') {
 	TRYAGAIN2:
 		system("cls");
 
@@ -150,7 +152,7 @@ MENU:
 		goto MENU;
 
 	}
-	else if (input == "0") {
+	else if (input[11] == '0') {
 		cout << endl << "Close connection" << endl;
 		exit(1);
 	}
