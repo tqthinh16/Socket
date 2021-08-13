@@ -28,23 +28,26 @@ int main() {
 	string IP, username, password, password1, input, clientInput, option;
 	string date = DateTodayString();
 
-	GotoXY(40, 12);
+	//FixConsoleWindow();
+
+	GotoXY(5, 2);
 	cout << "Enter IP: ";
 	getline(cin, IP);
 
 	// Initialize WinSock
 	WSAData data;
 	WORD ver = MAKEWORD(2, 2);
+
 	int wsResult = WSAStartup(ver, &data);
 	if (wsResult != 0)
 	{
 		cerr << "Can't start Winsock, Err #" << wsResult << endl;
-		return -1;
+		exit(1);
 	}
 
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET) {
-		cout << "socket failed" << endl;
+		cout << "Socket failed" << endl;
 		exit(1);
 	}
 
@@ -52,16 +55,15 @@ int main() {
 	address.sin_port = htons(port);
 	inet_pton(AF_INET, IP.c_str(), &address.sin_addr);
 
-
 	if (connect(sock, (struct sockaddr*)&address, sizeof(address)) < 0) {
-		cout << "connect failed" << endl;
+		cout << "Connect failed" << endl;
+		exit(1);
 	}
-
-	cout << "Connected!" << endl;
 
 MENU:
 	system("cls");
-	cout << "MENU:" << endl << "1. Login" << endl << "2. Sign up" << endl << "0. Exit" << endl << "Choose function: ";
+	GotoXY(0, 1);
+	cout << "------MENU------" << endl << endl << "1. Login" << endl << "2. Sign up" << endl << "0. Exit" << endl << endl << "----------------" << endl << "Choose function: ";
 	
 	getline(cin, input);
 	input = date + ":" + input;
@@ -73,7 +75,8 @@ MENU:
 	TRYAGAIN1:
 		system("cls");
 
-		cout << "LOGIN" << endl;
+		GotoXY(0, 1);
+		cout << "------LOGIN------" << endl << endl;
 		cout << "Username: ";
 		getline(cin, username);
 		cout << "password: ";
@@ -99,7 +102,8 @@ MENU:
 	TRYAGAIN2:
 		system("cls");
 
-		cout << "REGISTER" << endl;
+		GotoXY(0, 1);
+		cout << "------REGISTER------" << endl;
 		cout << "Username: ";
 		getline(cin, username);
 		cout << "Password: ";
@@ -148,7 +152,9 @@ MENU:
 	do
 	{
 		system("cls");
+
 		// Prompt the user for some text
+		GotoXY(0, 1);
 		cout << "Date: " << date << endl;
 		cout << "Enter country to look up (or change date): ";
 		getline(cin, clientInput);
@@ -173,10 +179,10 @@ MENU:
 				int bytesReceived = recv(sock, buffer, 1024, 0);
 				if (bytesReceived > 0)
 				{
-					// Echo response to console
+					// Cout response to console
 					
 					cout << endl << "SERVER>  " << string(buffer, 0, bytesReceived) << endl;
-					cout << "1. Continue Look up" << endl << "0. Exit" << endl << "Choose: ";
+					cout << "1. Continue Look up" << endl << "0. Exit" << endl << "----------------" << endl << "Choose: ";
 
 					LABEL1:
 					getline(cin, option);
@@ -202,8 +208,8 @@ MENU:
 				exit(1);
 			}
 		}
-
-	} while (clientInput.size() > 0);
+	} 
+	while (clientInput.size() > 0);
 
 	closesocket(sock);
 	WSACleanup();
