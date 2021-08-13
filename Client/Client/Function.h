@@ -26,4 +26,5 @@ using namespace std;
 string DateTodayString();
 string getpass();
 void GotoXY(int x, int y);
+void FixConsoleWindow();
 
