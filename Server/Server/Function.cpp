@@ -212,7 +212,7 @@ void WebToFile() {
     int rowCount = 0;
     struct hostent* Host;
     locale local;
-    char buffer[15000];
+    char buffer[2];
     int i = 0;
     int nDataLength;
     string website_HTML;
@@ -246,13 +246,15 @@ void WebToFile() {
     send(Socket, get_http.c_str(), strlen(get_http.c_str()), 0);
 
     // recieve html
-    while ((nDataLength = recv(Socket, buffer, 15000, 0)) > 0) {
+    while ((nDataLength = recv(Socket, buffer, 2, 0)) > 0) {
         int i = 0;
         while (buffer[i] >= 32 || buffer[i] == '\n' || buffer[i] == '\r') {
 
             website_HTML += buffer[i];
             i += 1;
+            
         }
+        ZeroMemory(buffer, 2);
     }
     closesocket(Socket);
     //WSACleanup();
