@@ -150,8 +150,6 @@ int main() {
 
             if (FD_ISSET(sd, &readfds))
             {
-
-            //BACK:
                 ZeroMemory(buffer, 1024);
 
                 //Check if it was for closing , and also read the incoming message 
@@ -258,7 +256,6 @@ int main() {
                         UserReg(l, username, password);
                         send(sd, correct, sizeof(correct) + 1, 0);
                         cout << endl << "CLient No." << i << " register successfully! " << endl;
-                        //goto BACK;
                     }
                 }
 
