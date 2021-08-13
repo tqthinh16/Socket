@@ -18,7 +18,7 @@
 using namespace std;
 
 int main() {
-	int sockfd, new_sock, valread;
+    int sockfd, new_sock, valread, max_sd;
 	struct sockaddr_in address;
 	int opt = 1;
 	int port = 8080;
@@ -28,13 +28,12 @@ int main() {
     char correct[8] = "correct";
     char confirm[8] = "confirm";
 	fd_set readfds;
-	int max_sd;
     string username, password, password1;
     char message[10] = "connected";
     bool checkLogin[30];
+
 	ClientList l = {nullptr, nullptr};
     CountryList p = { nullptr, nullptr };
-
 
 	for (int i = 0; i < max_clients; i++) {
 		client_socket[i] = 0;
@@ -42,10 +41,10 @@ int main() {
 	}
 	
     getLoginData(l, "input.txt");
-    getCountryData(p, "data.txt");
 
     WebToFile();
     time_mark hold = getTime_mark();
+
 	// Initialize WinSock
 	WSAData data;
 	WORD ver = MAKEWORD(2, 2);
@@ -67,7 +66,7 @@ int main() {
     if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt)))
     {
         perror("setsockopt");
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
 	address.sin_family = AF_INET;
@@ -78,7 +77,7 @@ int main() {
 
 	if (bind(sockfd, (struct sockaddr*)&address, len) < 0) {
 		cout << endl << "Bind Failed" << endl;
-		return -1;
+        exit(1);
 	}
 	cout << endl << "Binded" << endl;
 
@@ -129,7 +128,7 @@ int main() {
                 exit(EXIT_FAILURE);
             }
 
-            cout << "New connection from " << inet_ntoa(address.sin_addr) << ": ";
+            cout << endl << "New connection from " << inet_ntoa(address.sin_addr) << endl;
 
             //add new socket to array of sockets 
             for (int i = 0; i < max_clients; i++)
@@ -153,6 +152,8 @@ int main() {
             {
 
             BACK:
+                ZeroMemory(buffer, 1024);
+
                 //Check if it was for closing , and also read the incoming message 
                 valread = recv(sd, buffer, 1024, 0);
 
@@ -184,6 +185,7 @@ int main() {
                 if (input == "1") {
                     if (checkLogin[i] == false) {
                     TRY1:
+
                         ZeroMemory(buffer, 1024);
                         valread = recv(sd, buffer, 1024, 0);
                         username = buffer;
@@ -195,7 +197,9 @@ int main() {
                             //Somebody disconnected , get his details and print 
                             getpeername(sd, (struct sockaddr*)&address, &len);
                             cout << endl << "CLient No." << i << " disconnected! " << endl;
+
                             closesocket(sd);
+                            FD_CLR(sd, &readfds);
                             client_socket[i] = 0;
                             break;
                         }
@@ -218,6 +222,7 @@ int main() {
                 // if user want to register
                 else if (input == "2") {
                 TRY2:
+
                     ZeroMemory(buffer, 1024);
                     valread = recv(sd, buffer, 1024, 0);
                     username = buffer;
@@ -232,27 +237,26 @@ int main() {
                         getpeername(sd, (struct sockaddr*)&address, &len);
                         cout << "CLient No." << i << " disconnected! " << endl;
                         closesocket(sd);
+                        FD_CLR(sd, &readfds);
                         client_socket[i] = 0;
                         break;
                     }
 
                     if (password != password1)
                     {
-                        send(sd, confirm, sizeof(confirm), 0);
-                        cout << endl << "CLient No." << i << " login successfully! " << endl;
-                        cout << "Wrong confirm password" << endl;
+                        send(sd, confirm, sizeof(confirm) + 1, 0);
+                        cout << endl << "Wrong confirm password" << endl;
                         goto TRY2;
-
                     }
 
                     else if (checkAvailableUsername(l, username) == false) {
-                        send(sd, error, sizeof(error), 0);
+                        send(sd, error, sizeof(error) + 1, 0);
                         goto TRY2;
                     }
 
                     else {
                         UserReg(l, username, password);
-                        send(sd, correct, sizeof(correct), 0);
+                        send(sd, correct, sizeof(correct) + 1, 0);
                         cout << endl << "CLient No." << i << " register successfully! " << endl;
                         goto BACK;
                     }
@@ -263,11 +267,13 @@ int main() {
                     string confirm;
                     int sdk;
                 BACK3:
-                    cout << "Disconnect all connected clients? (Y/N): ";
+                    cout << endl << "Disconnect all connected clients? (Y/N): ";
                     getline(cin, confirm);
+
                     if (confirm == "Y") {
                         for (int i = 0; i < max_clients; i++) {
                             sdk = client_socket[i];
+                            FD_CLR(sdk, &readfds);
                             closesocket(sdk);
                         }
                         cout << endl << "Done!" << endl;
@@ -283,6 +289,7 @@ int main() {
                         goto BACK3;
                     }
                 }
+
                 else {
                     if (date_file == DateTodayString()) {
                         time_mark moment = getTime_mark();
@@ -306,10 +313,9 @@ int main() {
                         string todaydeath = to_string(cur->Today_Deaths);
                         string todaycases = to_string(cur->today_Cases);
 
-
                         string info = cur->name + "  Cases: " + cases + "  Today_Cases: " + todaycases + "  Deaths: " + death + "  Today_Deaths: " + todaydeath + "  Under_treatment: " + uTreat + "  Recovered: " + recovery + "\n";
 
-                        //Respones the message that came in 
+                        cout << endl <<  "SERVER> " << info;
 
                         //set the string terminating NULL byte on the end 
                         //of the data read 
