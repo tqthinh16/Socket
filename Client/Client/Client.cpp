@@ -1,4 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS
+#define _WIN32_WINNT 0x0A00
+
+#pragma comment (lib, "ws2_32.lib")
+#pragma comment (lib, "Mswsock.lib")
+#pragma comment (lib, "AdvApi32.lib")
 
 #include<iostream>
 #include<string.h>
@@ -11,45 +16,22 @@
 #include<ctime>
 #include <locale>
 #include <Windows.h>
-#pragma comment (lib, "ws2_32.lib")
-#pragma comment (lib, "Mswsock.lib")
-#pragma comment (lib, "AdvApi32.lib")
-
-#define _WIN32_WINNT 0x0A00
+#include"Function.h"
 
 using namespace std;
-
-
-string DateTodayString() {
-	time_t t = time(0);   // get time now
-	struct tm* now = localtime(&t);
-	string res;
-	if (now->tm_mday < 10) res += "0";
-	res += to_string(now->tm_mday);
-	res += "-";
-
-	if (now->tm_mon < 9) res += "0";
-	res += to_string(now->tm_mon + 1);
-
-	res += "-";
-
-	res += to_string(now->tm_year + 1900);
-	return res;
-}
-
-
 
 int main() {
 	int sock, valread;
 	struct sockaddr_in address;
 	int port = 8080;
 	char buffer[1024] = { 0 };
-	string IP;
+	string IP, username, password, password1, input, clientInput, option;
+	string date = DateTodayString();
+
+	GotoXY(40, 12);
 	cout << "Enter IP: ";
 	getline(cin, IP);
-	string username, password, password1;
-	string input;
-	string date = DateTodayString();
+
 	// Initialize WinSock
 	WSAData data;
 	WORD ver = MAKEWORD(2, 2);
@@ -59,6 +41,7 @@ int main() {
 		cerr << "Can't start Winsock, Err #" << wsResult << endl;
 		return -1;
 	}
+
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET) {
 		cout << "socket failed" << endl;
@@ -83,7 +66,6 @@ MENU:
 	getline(cin, input);
 	input = date + ":" + input;
 
-
 	send(sock, input.c_str(), input.size() + 1, 0);
 
 	if (input[11] == '1') {
@@ -95,7 +77,8 @@ MENU:
 		cout << "Username: ";
 		getline(cin, username);
 		cout << "password: ";
-		getline(cin, password);
+		password = getpass();
+		//getline(cin, password);
 		send(sock, username.c_str(), username.size() + 1, 0);
 		send(sock, password.c_str(), password.size() + 1, 0);
 
@@ -162,9 +145,6 @@ MENU:
 		goto MENU;
 	}
 
-	string clientInput;
-
-	/// <summary>
 	do
 	{
 		system("cls");
@@ -197,14 +177,13 @@ MENU:
 					
 					cout << endl << "SERVER>  " << string(buffer, 0, bytesReceived) << endl;
 					cout << "1. Continue Look up" << endl << "0. Exit" << endl << "Choose: ";
-					string i;
 
 					LABEL1:
-					getline(cin, i);
+					getline(cin, option);
 
-					if (i == "1")
+					if (option == "1")
 						continue;
-					else if (i == "0") {
+					else if (option == "0") {
 						cout << "Exit" << endl;
 						exit(1);
 					}
