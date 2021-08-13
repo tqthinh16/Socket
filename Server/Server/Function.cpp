@@ -146,7 +146,6 @@ Country* findCountry(CountryList& l, string name) {
 	Country* pcur = l.head;
 	while (pcur) {
 		if (pcur->name == name) {
-			//cout << pcur->name << " " << pcur->Cases << " " << pcur->uTreatment << " " << pcur->Other << " " << pcur->Recovery << " " << pcur->Death << endl;
 			return pcur;
 			break;
 		}
@@ -337,13 +336,12 @@ void getCountryData(CountryList& root,string date ) {
             root.tail = root.tail->next;
             root.tail->next = nullptr;
         }
-
     }
 }
 
 void deleteList(CountryList& p) {
     Country* temp;
-    while (p.head != NULL) {
+    while (p.head != nullptr) {
         temp = p.head;
         p.head = p.head->next;
         delete temp;
