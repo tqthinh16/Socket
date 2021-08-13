@@ -1,6 +1,10 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 
+#pragma comment (lib, "ws2_32.lib")
+#pragma comment (lib, "Mswsock.lib")
+#pragma comment (lib, "AdvApi32.lib")
+
 #ifndef Function_h_
 #define Function_h
 #endif // !Function_h_
@@ -16,7 +20,6 @@
 #include<sstream>
 
 //
-#include <winsock2.h>
 #include <windows.h>
 #include <vector>
 #include <locale>
@@ -24,9 +27,6 @@
 #include <ctype.h>
 #include "json/json.h"
 //
-#pragma comment (lib, "ws2_32.lib")
-#pragma comment (lib, "Mswsock.lib")
-#pragma comment (lib, "AdvApi32.lib")
 
 using namespace std;
 
