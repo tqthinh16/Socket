@@ -236,7 +236,7 @@ int main() {
                     {
                         //Somebody disconnected , get his details and print 
                         getpeername(sd, (struct sockaddr*)&address, &len);
-                        cout << "CLient No." << i << " disconnected! " << endl;
+                        cout << endl << "CLient No." << i << " disconnected! " << endl;
                         closesocket(sd);
                         FD_CLR(sd, &readfds);
                         checkLogin[i] = false;
