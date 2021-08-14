@@ -115,28 +115,6 @@ Country* create3(string str) {
 	return p;
 }
 
-//void getCountryData(CountryList& l, string file_name) {
-//	ifstream fin(file_name, ios_base::in);
-//	string temp;
-//	while (!fin.eof()) {
-//		getline(fin, temp);
-//		//Client* g = create1(temp);
-//		if (l.head == nullptr) {
-//			l.head = create3(temp);
-//			l.tail = l.head;
-//			l.tail->next = nullptr;
-//		}
-//		else {
-//			l.tail->next = create3(temp);
-//			l.tail = l.tail->next;
-//			l.tail->next = nullptr;
-//		}
-//	}
-//	fin.close();
-//}
-
-
-
 Country* findCountry(CountryList& l, string name) {
 	if (l.head == nullptr) {
 		cout << "not found" << endl;
