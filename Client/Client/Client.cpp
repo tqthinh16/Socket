@@ -213,7 +213,7 @@ MENU:
 						exit(1);
 					}
 					else {
-						cout << "Invalid input, pls choose again: ";
+						cout << endl << "Invalid input, pls choose again: ";
 						goto LABEL1;
 					}				
 				}
