@@ -141,6 +141,7 @@ MENU:
 	}
 	else if (input[11] == '0') {
 		cout << endl << "Close connection" << endl;
+		closesocket(sock);
 		exit(1);
 	}
 
@@ -171,6 +172,23 @@ MENU:
 			// Send the text
 			clientInput = date + ":" + clientInput;
 			int sendResult = send(sock, clientInput.c_str(), clientInput.size() + 1, 0);
+
+			if (clientInput == "-closeAll") {
+				recv(sock, buffer, 1024, 0);
+
+				cout << endl << "Waiting for the respond..." << endl;
+
+				if (strcmp(buffer, "Server denied") == 0) {
+					cout << endl << "Server denied" << endl;
+					continue;
+				}
+				else {
+					cout << endl << "Server closed! Client Disconnected..." << endl;
+					closesocket(sock);
+					exit(1);
+				}
+			}
+
 			if (sendResult != SOCKET_ERROR)
 			{
 				// Wait for response
@@ -191,6 +209,7 @@ MENU:
 						continue;
 					else if (option == "0") {
 						cout << "Exit" << endl;
+						closesocket(sock);
 						exit(1);
 					}
 					else {
@@ -200,11 +219,13 @@ MENU:
 				}
 				else {
 					cout << endl << "Server closed! Client Disconnected..." << endl;
+					closesocket(sock);
 					exit(1);
 				}
 			}
 			else {
 				cout << endl << "Server closed! Client Disconnected..." << endl;
+				closesocket(sock);
 				exit(1);
 			}
 		}
