@@ -30,7 +30,7 @@ int main() {
 
 	//FixConsoleWindow();
 
-	GotoXY(5, 2);
+	GotoXY(0, 1);
 	cout << "Enter IP: ";
 	getline(cin, IP);
 
