@@ -134,7 +134,7 @@ MENU:
 			exit(1);
 		}
 
-		cout << "Register successfully, Back to MENU" << endl;
+		cout << endl << "Register successfully, Back to MENU" << endl;
 		system("pause");
 		goto MENU;
 
