@@ -291,6 +291,7 @@ int main() {
                     if (date_file == DateTodayString()) {
                         time_mark moment = getTime_mark();
                         if (greaterTime(moment, hold)) {
+                            hold = moment;
                             WebToFile();
                         }
                     }
