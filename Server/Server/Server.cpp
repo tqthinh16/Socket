@@ -41,7 +41,7 @@ int main() {
         checkLogin[i] = false;
 	}
 	
-    getLoginData(l, "input.txt");
+    getLoginData(l, "login.txt");
 
     WebToFile();
     time_mark hold = getTime_mark();
