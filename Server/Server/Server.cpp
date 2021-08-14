@@ -142,7 +142,7 @@ int main() {
                 }
             }
         }
-
+    BACK2:
         //else its some IO operation on some other socket
         for (int i = 0; i < max_clients; i++)
         {
@@ -150,7 +150,7 @@ int main() {
 
             if (FD_ISSET(sd, &readfds))
             {
-            BACK2:
+            
                 ZeroMemory(buffer, 1024);
 
                 //Check if it was for closing , and also read the incoming message 
