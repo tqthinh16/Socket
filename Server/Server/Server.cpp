@@ -35,6 +35,7 @@ int main() {
 	ClientList l = {nullptr, nullptr};
     CountryList p = { nullptr, nullptr };
 
+    //initialise all client_socket[] to 0 so not checked
 	for (int i = 0; i < max_clients; i++) {
 		client_socket[i] = 0;
         checkLogin[i] = false;
@@ -62,10 +63,10 @@ int main() {
 	}
 	cout << "Socket created" << endl;
 
-    // Forcefully attaching socket to the port 8080
-    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt)))
+    // Set master socket to allow multiple connections
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt)) < 0)
     {
-        perror("setsockopt");
+        cout << "setsockopt" << endl;;
         exit(1);
     }
 
@@ -81,6 +82,7 @@ int main() {
 	}
 	cout << endl << "Binded" << endl;
 
+    // SOMAXCONN defines the maximum number you're allowed to pass to listen()
 	listen(sockfd, SOMAXCONN);
 	cout << endl << "Waiting for connection....." << endl;
 
@@ -108,8 +110,7 @@ int main() {
                 max_sd = sd;
         }
 
-        //wait for an activity on one of the sockets, timeout is NULL, 
-        //so wait indefinitely 
+        //wait for an activity on one of the sockets, timeout is NULL, so wait indefinitely 
         activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
 
         //if ((activity < 0) && (errno != EINTR))
@@ -117,9 +118,7 @@ int main() {
         //    printf("select error");
         //}
 
-    //BACK2:
-        //If something happened on the master socket, 
-        //then its an incoming connection 
+        //If something happened on the master socket, then its an incoming connection 
         if (FD_ISSET(sockfd, &readfds))
         {
             if ((new_sock = accept(sockfd, (struct sockaddr*)&address, &len)) < 0)
@@ -143,6 +142,7 @@ int main() {
             }
         }
     BACK2:
+
         //else its some IO operation on some other socket
         for (int i = 0; i < max_clients; i++)
         {
@@ -263,7 +263,7 @@ int main() {
                     }
                 }
 
-                // Secret command to disconnect all client connection
+                // Secret command to disconnect all client connections
                 else if (input == "-closeAll") {
                     string confirm;
                     int sdk;
@@ -275,6 +275,7 @@ int main() {
                         for (int i = 0; i < max_clients; i++) {
                             sdk = client_socket[i];
                             checkLogin[i] = false;
+                            client_socket[i] = 0;
                             //FD_CLR(sdk, &readfds);
                             closesocket(sdk);
                         }
@@ -320,8 +321,7 @@ int main() {
 
                         cout << endl <<  "SERVER> " << info;
 
-                        //set the string terminating NULL byte on the end 
-                        //of the data read 
+                        //set the string terminating NULL byte on the end of the data read
                         buffer[valread] = '\0';
                         send(sd, info.c_str(), info.size() + 1, 0);
                     }
