@@ -141,11 +141,12 @@ int main() {
                 }
             }
         }
-    BACK2:
+    
 
         //else its some IO operation on some other socket
         for (int i = 0; i < max_clients; i++)
         {
+        BACK2:
             sd = client_socket[i];
 
             if (FD_ISSET(sd, &readfds))
