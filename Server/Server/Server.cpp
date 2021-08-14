@@ -1,4 +1,9 @@
 #pragma warning( disable : 4996)
+
+#pragma comment (lib, "ws2_32.lib")
+#pragma comment (lib, "Mswsock.lib")
+#pragma comment (lib, "AdvApi32.lib")
+
 #include<iostream>
 #include<string.h>
 #include<WinSock2.h>
@@ -9,11 +14,6 @@
 #include<time.h>
 
 #include"Function.h"
-
-#pragma comment (lib, "ws2_32.lib")
-#pragma comment (lib, "Mswsock.lib")
-#pragma comment (lib, "AdvApi32.lib")
-
 
 using namespace std;
 
