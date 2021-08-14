@@ -68,9 +68,10 @@ MENU:
 	getline(cin, input);
 	input = date + ":" + input;
 
-	send(sock, input.c_str(), input.size() + 1, 0);
+	
 
 	if (input[11] == '1') {
+		send(sock, input.c_str(), input.size() + 1, 0);
 
 	TRYAGAIN1:
 		system("cls");
@@ -99,7 +100,9 @@ MENU:
 	}
 
 	else if (input[11] == '2') {
+		send(sock, input.c_str(), input.size() + 1, 0);
 	TRYAGAIN2:
+		
 		system("cls");
 
 		GotoXY(0, 1);
