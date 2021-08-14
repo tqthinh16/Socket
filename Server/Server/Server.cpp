@@ -114,10 +114,10 @@ int main() {
 
         if ((activity < 0) && (errno != EINTR))
         {
-            printf("select error");
+            //printf("select error");
         }
 
-    BACK2:
+    //BACK2:
         //If something happened on the master socket, 
         //then its an incoming connection 
         if (FD_ISSET(sockfd, &readfds))
@@ -270,11 +270,11 @@ int main() {
                     if (confirm == "Y") {
                         for (int i = 0; i < max_clients; i++) {
                             sdk = client_socket[i];
-                            FD_CLR(sdk, &readfds);
+                            //FD_CLR(sdk, &readfds);
                             closesocket(sdk);
                         }
                         cout << endl << "Done!" << endl;
-                        goto BACK2;
+                        //goto BACK2;
                     }
                     else if (confirm == "N") {
                         string denied = "Server denied";
