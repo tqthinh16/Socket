@@ -150,6 +150,7 @@ MENU:
 
 	else {
 		cout << "Invalid ipnut, pls try again!" << endl;
+		system("pause");
 		goto MENU;
 	}
 
