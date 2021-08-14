@@ -112,10 +112,10 @@ int main() {
         //so wait indefinitely 
         activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
 
-        if ((activity < 0) && (errno != EINTR))
-        {
-            //printf("select error");
-        }
+        //if ((activity < 0) && (errno != EINTR))
+        //{
+        //    printf("select error");
+        //}
 
     //BACK2:
         //If something happened on the master socket, 
@@ -150,6 +150,7 @@ int main() {
 
             if (FD_ISSET(sd, &readfds))
             {
+            BACK2:
                 ZeroMemory(buffer, 1024);
 
                 //Check if it was for closing , and also read the incoming message 
@@ -176,6 +177,7 @@ int main() {
                     cout << endl << "CLient No." << i << " disconnected! " << endl;
                     closesocket(sd);
                     client_socket[i] = 0;
+                    checkLogin[i] = false;
                     break;
                 }
 
@@ -199,6 +201,7 @@ int main() {
                             closesocket(sd);
                             FD_CLR(sd, &readfds);
                             client_socket[i] = 0;
+                            checkLogin[i] = false;
                             break;
                         }
 
@@ -236,6 +239,7 @@ int main() {
                         cout << "CLient No." << i << " disconnected! " << endl;
                         closesocket(sd);
                         FD_CLR(sd, &readfds);
+                        checkLogin[i] = false;
                         client_socket[i] = 0;
                         break;
                     }
@@ -270,11 +274,12 @@ int main() {
                     if (confirm == "Y") {
                         for (int i = 0; i < max_clients; i++) {
                             sdk = client_socket[i];
+                            checkLogin[i] = false;
                             //FD_CLR(sdk, &readfds);
                             closesocket(sdk);
                         }
                         cout << endl << "Done!" << endl;
-                        //goto BACK2;
+                        goto BACK2;
                     }
                     else if (confirm == "N") {
                         string denied = "Server denied";
