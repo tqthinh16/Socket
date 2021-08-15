@@ -143,13 +143,13 @@ MENU:
 
 	}
 	else if (input[11] == '0') {
-		cout << endl << "Close connection" << endl;
+		cout << endl << "Close connection!" << endl;
 		closesocket(sock);
 		exit(1);
 	}
 
 	else {
-		cout << "Invalid ipnut, pls try again!" << endl;
+		cout << "Invalid input, pls try again!" << endl;
 		system("pause");
 		goto MENU;
 	}
@@ -161,7 +161,7 @@ MENU:
 		// Prompt the user for some text
 		GotoXY(0, 1);
 		cout << "Date: " << date << endl;
-		cout << "Enter country to look up (or change date): ";
+		cout << "Enter country name to look up (or change date): ";
 		getline(cin, clientInput);
 
 		if (clientInput.size() == 10) {
@@ -178,9 +178,9 @@ MENU:
 			int sendResult = send(sock, clientInput.c_str(), clientInput.size() + 1, 0);
 
 			if (clientInput == "-closeAll") {
-				recv(sock, buffer, 1024, 0);
 
 				cout << endl << "Waiting for the respond..." << endl;
+				recv(sock, buffer, 1024, 0);
 
 				if (strcmp(buffer, "Server denied") == 0) {
 					cout << endl << "Server denied" << endl;
@@ -204,7 +204,7 @@ MENU:
 					// Cout response to console
 					
 					cout << endl << "SERVER>  " << string(buffer, 0, bytesReceived) << endl;
-					cout << "1. Continue Look up" << endl << "0. Exit" << endl << "----------------" << endl << "Choose: ";
+					cout << "1. Continue to look up" << endl << "0. Exit" << endl << "----------------" << endl << "Choose: ";
 
 					LABEL1:
 					getline(cin, option);
@@ -212,7 +212,7 @@ MENU:
 					if (option == "1")
 						continue;
 					else if (option == "0") {
-						cout << "Exit" << endl;
+						cout << endl << "Exit" << endl;
 						closesocket(sock);
 						exit(1);
 					}
